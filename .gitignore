@@ -1,0 +1,25 @@
+# Node.js dependencies
+node_modules/
+
+# Rust build artifacts
+target/
+
+# Local environment secrets
+.env
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Compiled WASM artifacts
+artifacts/*.wasm
+artifacts/*.wasm.*
+artifacts/checksums.txt
+
+# Misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
