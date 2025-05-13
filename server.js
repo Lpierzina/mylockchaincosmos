@@ -1,14 +1,17 @@
-// server.js
 require("dotenv").config();
 const express = require("express");
 const { DirectSecp256k1HdWallet } = require("@cosmjs/proto-signing");
 const { SigningCosmWasmClient } = require("@cosmjs/cosmwasm-stargate");
-const { fromHex, toHex } = require("@cosmjs/encoding");
+const { fromHex } = require("@cosmjs/encoding");
 const cors = require("cors");
+const path = require("path");
 
-const app = express();
+const app = express(); // ✅ Define app first
 app.use(cors());
 app.use(express.json());
+
+// ✅ Serve static frontend from ./public
+app.use(express.static(path.join(__dirname, "public")));
 
 const PORT = process.env.PORT || 3000;
 
@@ -27,14 +30,8 @@ async function getClient() {
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(COSMOS_MNEMONIC, {
     prefix: "neutron",
   });
-
   const [account] = await wallet.getAccounts();
-
-  const client = await SigningCosmWasmClient.connectWithSigner(
-    COSMOS_RPC,
-    wallet
-  );
-
+  const client = await SigningCosmWasmClient.connectWithSigner(COSMOS_RPC, wallet);
   return { client, sender: account.address };
 }
 
@@ -51,17 +48,12 @@ app.post("/cosmosSubmitDocument", async (req, res) => {
       },
     };
 
-    const result = await client.execute(
-      sender,
-      CONTRACT_ADDRESS,
-      msg,
-      {
-        amount: [{ denom: GAS_DENOM, amount: FEE_AMOUNT }],
-        gas: "300000",
-      }
-    );
+    const result = await client.execute(sender, CONTRACT_ADDRESS, msg, {
+      amount: [{ denom: GAS_DENOM, amount: FEE_AMOUNT }],
+      gas: "300000",
+    });
 
-    return res.json({ success: true, transactionHash: result.transactionHash });
+    res.json({ success: true, transactionHash: result.transactionHash });
   } catch (err) {
     console.error("/cosmosSubmitDocument error:", err);
     res.status(500).json({ error: err.message });
@@ -111,7 +103,7 @@ app.post("/getDetails", async (req, res) => {
   }
 });
 
-// Start server
+// 🚀 Start the server
 app.listen(PORT, () => {
   console.log(`🚀 MyLockChain Cosmos API live on port ${PORT}`);
 });
