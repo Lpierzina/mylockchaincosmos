@@ -5,7 +5,7 @@ const { SigningCosmWasmClient } = require("@cosmjs/cosmwasm-stargate");
 const { fromHex } = require("@cosmjs/encoding");
 const cors = require("cors");
 const path = require("path");
-const cors = require('cors');
+
 
 
 
