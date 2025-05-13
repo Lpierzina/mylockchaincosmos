@@ -8,8 +8,11 @@ const path = require("path");
 
 const app = express(); // ✅ Define app first
 app.use(cors({
-  origin: 'https://mylockchaincosmos.netlify.app'
+  origin: 'https://mylockchaincosmos.netlify.app',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
 }));
+
 app.use(express.json());
 
 // ✅ Serve static frontend from ./public
