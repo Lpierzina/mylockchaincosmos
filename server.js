@@ -10,12 +10,19 @@ const path = require("path");
 
 
 const app = express(); // ✅ Define app first
+// globally enable CORS on all methods
 app.use(cors({
   origin: 'https://mylockchaincosmos.netlify.app',
-  methods: ['GET', 'POST'],
+  methods: ['GET','POST','OPTIONS'],
   allowedHeaders: ['Content-Type']
 }));
 
+// explicitly handle preflight
+app.options('*', cors({
+  origin: 'https://mylockchaincosmos.netlify.app',
+  methods: ['GET','POST','OPTIONS'],
+  allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
 
 
