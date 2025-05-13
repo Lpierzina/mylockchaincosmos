@@ -7,7 +7,9 @@ const cors = require("cors");
 const path = require("path");
 
 const app = express(); // ✅ Define app first
-app.use(cors());
+app.use(cors({
+  origin: 'https://mylockchaincosmos.netlify.app'
+}));
 app.use(express.json());
 
 // ✅ Serve static frontend from ./public
