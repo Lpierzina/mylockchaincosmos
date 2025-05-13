@@ -15,6 +15,7 @@ app.use(cors({
 
 app.use(express.json());
 
+
 // ✅ Serve static frontend from ./public
 app.use(express.static(path.join(__dirname, "public")));
 
