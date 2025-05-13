@@ -1696,30 +1696,36 @@ async function checkNetwork() {
     }
 
 
-const API_BASE_URL = "https://mylockchaincosmos.herokuapp.com";
+// 1) Make sure this matches your Cosmos API (Heroku) URL.
+  const API_BASE_URL = "https://mylockchaincosmos.herokuapp.com";
 
-async function loadConfig() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/config`);
-    const config = await response.json();
+  async function loadConfig() {
+    try {
+      const resp = await fetch(`${API_BASE_URL}/config`, {
+        method: "GET",
+        mode: "cors",                // <-- tell the browser to do CORS
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
-    // Save Cosmos config globally
-    window.COSMOS_CONFIG = config.COSMOS_CONFIG;
-    console.log("✅ Loaded Cosmos Config:", window.COSMOS_CONFIG);
+      const { COSMOS_CONFIG } = await resp.json();
+      window.COSMOS_CONFIG = COSMOS_CONFIG;
+      console.log("✅ Loaded Cosmos Config:", COSMOS_CONFIG);
 
-    const { CONTRACT_ADDRESS, CHAIN_ID, RPC, GAS_DENOM } = window.COSMOS_CONFIG;
+      // Now you can pull out CONTRACT_ADDRESS, CHAIN_ID, etc:
+      const { CONTRACT_ADDRESS, CHAIN_ID, RPC, GAS_DENOM, FEE_AMOUNT } = COSMOS_CONFIG;
+      // …and use them in your Cosmos calls…
 
-    // Optional: Show in UI
-    const contractAddressEl = document.getElementById("contractAddressDisplay");
-    if (contractAddressEl) {
-      contractAddressEl.innerText = `Smart Wallet: ${CONTRACT_ADDRESS}`;
+      // (Optional) show in the UI, if you have an element with this id:
+      const el = document.getElementById("contractAddressDisplay");
+      if (el) el.innerText = `Cosmos Contract: ${CONTRACT_ADDRESS}`;
+
+    } catch (err) {
+      console.error("❌ Failed to load config:", err);
     }
-  } catch (err) {
-    console.error("❌ Failed to load config:", err);
   }
-}
 
-document.addEventListener("DOMContentLoaded", loadConfig);
+  document.addEventListener("DOMContentLoaded", loadConfig);
 
 	</script>
 
