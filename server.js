@@ -41,6 +41,17 @@ async function getClient() {
   return { client, sender: account.address };
 }
 
+// ✅ Serve the frontend
+// config endpoint
+app.get("/config", (req, res) => {
+  res.json({
+    COSMOS_CHAIN_ID,
+    CONTRACT_ADDRESS,
+    WALLET_ADDRESS
+  });
+});
+
+
 // 🔐 /cosmosSubmitDocument
 app.post("/cosmosSubmitDocument", async (req, res) => {
   try {
