@@ -5,6 +5,9 @@ const { SigningCosmWasmClient } = require("@cosmjs/cosmwasm-stargate");
 const { fromHex } = require("@cosmjs/encoding");
 const cors = require("cors");
 const path = require("path");
+const cors = require('cors');
+
+
 
 const app = express(); // ✅ Define app first
 app.use(cors({
@@ -43,13 +46,20 @@ async function getClient() {
 
 // ✅ Serve the frontend
 // config endpoint
-app.get("/config", (req, res) => {
+app.get('/config', (req, res) => {
   res.json({
-    COSMOS_CHAIN_ID,
-    CONTRACT_ADDRESS,
-    WALLET_ADDRESS
+    COSMOS_CONFIG: {
+      CONTRACT_ADDRESS: process.env.CONTRACT_ADDRESS,
+      CHAIN_ID: process.env.COSMOS_CHAIN_ID,
+      RPC: process.env.COSMOS_RPC,
+      FEE_AMOUNT: process.env.FEE_AMOUNT,
+      GAS_DENOM: process.env.GAS_DENOM,
+      WALLET_ADDRESS: process.env.WALLET_ADDRESS
+    }
   });
 });
+
+
 
 
 // 🔐 /cosmosSubmitDocument

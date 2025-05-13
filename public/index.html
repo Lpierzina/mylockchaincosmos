@@ -19,8 +19,7 @@
 <!-- ✅ Ethers -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 
-<!-- ✅ ERC-4337 Utils -->
-<script src="https://cdn.jsdelivr.net/npm/@account-abstraction/utils@0.6.0/dist/index.umd.js"></script>
+
 
 	<script src="/scripts/submitUserOp.js"></script>
 
@@ -970,294 +969,7 @@
     let currentParcelIpfsHash = null;
 
 
-    // Contract ABI
-    // --- Contract Details ---
-const contractAbi = [
-    {
-      "inputs": [
-        {
-          "internalType": "contract IEntryPoint",
-          "name": "entryPoint_",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "index",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bytes",
-          "name": "error",
-          "type": "bytes"
-        }
-      ],
-      "name": "ExecuteError",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnableInvalidOwner",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        }
-      ],
-      "name": "OwnableUnauthorizedAccount",
-      "type": "error"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "previousOwner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnershipTransferred",
-      "type": "event"
-    },
-    {
-      "inputs": [],
-      "name": "entryPoint",
-      "outputs": [
-        {
-          "internalType": "contract IEntryPoint",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "dest",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bytes",
-          "name": "func",
-          "type": "bytes"
-        }
-      ],
-      "name": "execute",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address[]",
-          "name": "dest",
-          "type": "address[]"
-        },
-        {
-          "internalType": "bytes[]",
-          "name": "func",
-          "type": "bytes[]"
-        }
-      ],
-      "name": "executeBatch",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "components": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "value",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "data",
-              "type": "bytes"
-            }
-          ],
-          "internalType": "struct BaseAccount.Call[]",
-          "name": "calls",
-          "type": "tuple[]"
-        }
-      ],
-      "name": "executeBatch",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getNonce",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "renounceOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "components": [
-            {
-              "internalType": "address",
-              "name": "sender",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "nonce",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "initCode",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes",
-              "name": "callData",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes32",
-              "name": "accountGasLimits",
-              "type": "bytes32"
-            },
-            {
-              "internalType": "uint256",
-              "name": "preVerificationGas",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes32",
-              "name": "gasFees",
-              "type": "bytes32"
-            },
-            {
-              "internalType": "bytes",
-              "name": "paymasterAndData",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes",
-              "name": "signature",
-              "type": "bytes"
-            }
-          ],
-          "internalType": "struct PackedUserOperation",
-          "name": "userOp",
-          "type": "tuple"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "userOpHash",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint256",
-          "name": "missingAccountFunds",
-          "type": "uint256"
-        }
-      ],
-      "name": "validateUserOp",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "validationData",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "stateMutability": "payable",
-      "type": "receive"
-    }
-  ];
 
-        const contractAddress = '0xF22570437AC863b105a7BbD49979831286D8e9BE'; // erc 4337 Arbitrum address
-
-    /* Etherscan Gas Price with your API key */
-  const ARBISCAN_API_KEY = "H7MYD24NZWPPAZSSWIDFHJ4VA5YWV38GRR"; // arbiscan api key
-  const GAS_URL = `https://api.arbiscan.io/api?module=gastracker&action=gasoracle&apikey=${ARBISCAN_API_KEY}`;
 
   document.addEventListener('DOMContentLoaded', function() {
   const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -1739,7 +1451,7 @@ async function uploadToIPFS() {
         formData.append('file', fileToUpload);
 
         const response = await fetch(
-            'https://polar-stream-23993-43b80ccd3a73.herokuapp.com/upload',
+            'https://polar-stream-23993-43b80ccd3a73.herokuapp.com/upload',  //
             {
                 method: 'POST',
                 body: formData
@@ -1778,65 +1490,50 @@ async function uploadToIPFS() {
 }
 
     // 4) Register Hash on Blockchain
-    async function registerHashOnBlockchain() {
-    if (!web3 || !account) {
-        alert('Please connect your wallet first.');
-        return;
+   async function registerHashOnCosmos() {
+  if (!hashHex || !ipfsHash) {
+    alert('Hash or IPFS data missing.');
+    return;
+  }
+
+  toggleLoadingOverlay(true);
+
+  try {
+    const res = await fetch('https://mylockchaincosmos.herokuapp.com/registerHash', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        hashHex,
+        ipfsHash,
+        fileName: lastUploadedFileName
+      })
+    });
+
+    const result = await res.json();
+
+    if (result.success && result.txHash) {
+      const receiptHTML = `
+        <strong>File Name:</strong> ${lastUploadedFileName}<br>
+        <strong>IPFS Hash:</strong> ${ipfsHash}<br>
+        <strong>Blockchain Transaction:</strong>
+        <a href="https://www.mintscan.io/neutron/txs/${result.txHash}" target="_blank">${result.txHash}</a>
+      `;
+
+      document.getElementById('receiptContent').innerHTML = receiptHTML;
+      document.getElementById('receipt').style.display = 'block';
+
+      const ipfsLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+      new QRCode(document.getElementById('qrCode'), ipfsLink);
+      document.getElementById('receipt').scrollIntoView({ behavior: 'smooth' });
+    } else {
+      alert('❌ Cosmos registration failed: ' + result.error);
     }
-    if (!ipfsHash) {
-        alert('Please hash a document first.');
-        return;
-    }
-
-    toggleLoadingOverlay(true);
-    try {
-        const hashHex = web3.utils.keccak256(ipfsHash); // Convert IPFS hash to bytes32
-
-        const isRegistered = await contract.methods.isDocumentRegistered(hashHex).call();
-        if (isRegistered) {
-            alert('This document is already registered.');
-            toggleLoadingOverlay(false);
-            return;
-        }
-
-        // Get current fee from contract
-        const feeInWei = await contract.methods.getFee().call();
-
-        // Set gas parameters explicitly
-        const gasPrice = await web3.eth.getGasPrice();
-        const gasLimit = await contract.methods.registerDocument(hashHex).estimateGas({
-            from: account,
-            value: feeInWei
-        });
-
-        const txReceipt = await contract.methods.registerDocument(hashHex).send({
-            from: account,
-            value: feeInWei,
-            gas: Math.floor(gasLimit * 1.2), // 20% buffer
-            gasPrice: Math.floor(gasPrice * 1.5) // 50% higher priority
-        });
-
-        const block = await web3.eth.getBlock(txReceipt.blockNumber);
-        const blockTimestamp = new Date(block.timestamp * 1000).toLocaleString();
-
-        const ipfsLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
-
-        generateReceipt({
-            fileName: lastUploadedFileName,
-            ipfsHash: ipfsHash,
-            docHash: hashHex,
-            account: account,
-            transactionHash: txReceipt.transactionHash,
-            dateTime: blockTimestamp,
-            ipfsLink: ipfsLink
-        });
-
-    } catch (error) {
-        console.error('Error registering hash on blockchain:', error);
-        alert('Error: ' + error.message);
-    } finally {
-        toggleLoadingOverlay(false);
-    }
+  } catch (err) {
+    console.error(err);
+    alert('❌ Cosmos registration error.');
+  } finally {
+    toggleLoadingOverlay(false);
+  }
 }
 
 
@@ -1881,6 +1578,7 @@ async function uploadToIPFS() {
     }
 
     // 6) Verify Document (no change)
+// Updated receipt generation for Cosmos transaction link
 async function verifyDocument() {
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
@@ -1908,8 +1606,7 @@ async function verifyDocument() {
       const data = await response.json();
 
       if (data.isRegistered) {
-        const CONTRACT_ADDRESS = '0xYourRegistryAddressHere'; // Replace with actual
-        const receipt = `
+        const receiptHTML = `
 📜 Document Registration Receipt
 ───────────────────────────────
 ✅ Status: Registered on Blockchain
@@ -1917,7 +1614,7 @@ async function verifyDocument() {
 🧾 File Hash: ${hashHexToVerify}
 👤 Registrant: ${data.registrant}
 ⏰ Timestamp: ${new Date(data.timestamp * 1000).toLocaleString()}
-🔗 Contract: https://arbiscan.io/address/${CONTRACT_ADDRESS}
+🔗 Transaction Hash: <a href="https://www.mintscan.io/neutron/txs/${data.txHash}" target="_blank">${data.txHash}</a>
         `.trim();
 
         // Display the receipt in the UI
@@ -1928,63 +1625,14 @@ async function verifyDocument() {
         receiptDiv.style.border = '1px solid #ccc';
         receiptDiv.style.borderRadius = '8px';
         receiptDiv.style.background = '#f9f9f9';
-        receiptDiv.textContent = receipt;
+        receiptDiv.textContent = receiptHTML;
 
-        // Email form
-        const emailInput = document.createElement('input');
-        emailInput.type = 'email';
-        emailInput.placeholder = 'Enter your email for receipt';
-        emailInput.style.marginTop = '10px';
-        emailInput.style.padding = '8px';
-        emailInput.style.width = '300px';
-        emailInput.style.display = 'block';
+        document.body.appendChild(receiptDiv);
 
-        const sendButton = document.createElement('button');
-        sendButton.textContent = 'Send Email Receipt';
-        sendButton.style.marginTop = '8px';
-        sendButton.onclick = async () => {
-          const email = emailInput.value.trim();
-          if (!email || !email.includes('@')) {
-            alert('Please enter a valid email.');
-            return;
-          }
-
-          const sendRes = await fetch('https://mylockchaincosmos.herokuapp.com/sendReceipt', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email,
-              fileName: file.name,
-              ipfsHash: 'N/A',
-              hashHex: hashHexToVerify,
-              txHash: 'N/A',
-              registrant: data.registrant,
-              timestamp: data.timestamp
-            })
-          });
-
-          const sendJson = await sendRes.json();
-          if (sendJson.success) {
-            alert('📩 Email sent successfully!');
-          } else {
-            alert('❌ Email failed: ' + (sendJson.error || 'Unknown error'));
-          }
-        };
-
-        // Mount everything to the page
-        const resultContainer = document.getElementById('verificationResult') || document.createElement('div');
-        resultContainer.id = 'verificationResult';
-        resultContainer.innerHTML = ''; // Clear old results
-        resultContainer.appendChild(receiptDiv);
-        resultContainer.appendChild(emailInput);
-        resultContainer.appendChild(sendButton);
-
-        document.body.appendChild(resultContainer);
-
-      	// ✅ Auto-scroll to the receipt
-	setTimeout(() => {
-	  resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-	}, 100);
+        // Auto-scroll to the receipt
+        setTimeout(() => {
+          receiptDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
 
       } else {
         alert('❌ Document is not registered on the blockchain.');
@@ -2056,12 +1704,14 @@ async function loadConfig() {
 	  const config = await response.json();
 
     // ✅ Save ERC-4337 config globally
-    window.ERC4337_CONFIG = config.ERC4337_CONFIG;
+window.COSMOS_CONFIG = config.COSMOS_CONFIG;
+console.log("✅ Loaded Cosmos Config:", window.COSMOS_CONFIG);
 
-    console.log("✅ Loaded ERC-4337 Config:", window.ERC4337_CONFIG);
 
-    // Example usage
-    const { ENTRY_POINT, SMART_WALLET, PAYMASTER, BUNDLER_RPC, REGISTRY_ADDRESS } = window.ERC4337_CONFIG;
+const { CONTRACT_ADDRESS, CHAIN_ID, RPC, GAS_DENOM } = window.COSMOS_CONFIG;
+
+
+
 
     // Optional: Show in UI
 		const contractAddressEl = document.getElementById("contractAddressDisplay");
