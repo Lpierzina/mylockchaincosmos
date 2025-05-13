@@ -1700,81 +1700,27 @@ const API_BASE_URL = "https://mylockchaincosmos.herokuapp.com";
 
 async function loadConfig() {
   try {
-	  const response = await fetch(`${API_BASE_URL}/config`);
-	  const config = await response.json();
+    const response = await fetch(`${API_BASE_URL}/config`);
+    const config = await response.json();
 
-    // ✅ Save ERC-4337 config globally
-window.COSMOS_CONFIG = config.COSMOS_CONFIG;
-console.log("✅ Loaded Cosmos Config:", window.COSMOS_CONFIG);
+    // Save Cosmos config globally
+    window.COSMOS_CONFIG = config.COSMOS_CONFIG;
+    console.log("✅ Loaded Cosmos Config:", window.COSMOS_CONFIG);
 
-
-const { CONTRACT_ADDRESS, CHAIN_ID, RPC, GAS_DENOM } = window.COSMOS_CONFIG;
-
-
-
+    const { CONTRACT_ADDRESS, CHAIN_ID, RPC, GAS_DENOM } = window.COSMOS_CONFIG;
 
     // Optional: Show in UI
-		const contractAddressEl = document.getElementById("contractAddressDisplay");
-		if (contractAddressEl) {
-		  contractAddressEl.innerText = `Smart Wallet: ${SMART_WALLET}`;
-		}
-		  } catch (err) {
-			console.error("❌ Failed to load config:", err);
-		  }
-		}
-
-		async function handleErc4337Submission({ hashHex, userAddress }) {
-		  console.log("📦 Starting ERC-4337 UserOp preparation...");
-
-  try {
-    const signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
-
-    // ✅ 1. Prepare userOp on the backend
-    const response = await fetch('https://mylockchaincosmos.herokuapp.com/prepareUserOp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ documentHash: hashHex })
-    });
-
-    const { userOp, userOpHash } = await response.json();
-
-    if (!userOp || !userOpHash) {
-      throw new Error("❌ Backend did not return a valid UserOp or UserOpHash.");
-    }
-
-    console.log("📝 UserOp prepared. Signing with MetaMask...");
-
-    // ✅ 2. Sign the hash with MetaMask
-    const signature = await signer.signMessage(ethers.utils.arrayify(userOpHash));
-    userOp.signature = signature;
-
-    console.log("🔐 Signature attached. Submitting to backend...");
-
-    // ✅ 3. Submit signed UserOp to backend
-    const submitResponse = await fetch('https://mylockchaincosmos.herokuapp.com/submitSignedUserOp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userOp, signature })
-    });
-
-    const result = await submitResponse.json();
-
-    if (result.success) {
-      console.log("✅ UserOp submitted successfully:", result.txHash);
-      alert("🎉 Document hash registered successfully!\nTx: " + result.txHash);
-    } else {
-      console.error("❌ Submission failed:", result.error);
-      alert("🚫 Submission failed. Check console for details.");
+    const contractAddressEl = document.getElementById("contractAddressDisplay");
+    if (contractAddressEl) {
+      contractAddressEl.innerText = `Smart Wallet: ${CONTRACT_ADDRESS}`;
     }
   } catch (err) {
-    console.error("❌ Error during ERC-4337 flow:", err);
-    alert("❌ Submission failed: " + (err.message || "Unknown error"));
+    console.error("❌ Failed to load config:", err);
   }
 }
 
-
-// Load config when the page loads
 document.addEventListener("DOMContentLoaded", loadConfig);
+
 	</script>
 
 
