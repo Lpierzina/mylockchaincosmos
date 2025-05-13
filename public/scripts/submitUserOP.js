@@ -1,6 +1,6 @@
 window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileName }) {
   try {
-    const cosmosRes = await fetch("https://mylockchaincosmos.herokuapp.com/cosmosSubmitDocument", {
+    const cosmosRes = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/cosmosSubmitDocument", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ documentHash: hashHex }),
@@ -11,7 +11,7 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
     // Add a delay before checking registration
     await new Promise(r => setTimeout(r, 2000));
 
-    const checkRes = await fetch("https://mylockchaincosmos.herokuapp.com/checkRegistration", {
+    const checkRes = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/checkRegistration", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ hashHex }),
@@ -20,7 +20,7 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
     const { isRegistered } = await checkRes.json();
     if (!isRegistered) throw new Error("Document not registered yet.");
 
-    const detailsRes = await fetch("https://mylockchaincosmos.herokuapp.com/getDetails", {
+    const detailsRes = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/getDetails", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ hashHex }),
@@ -65,7 +65,7 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
       }
 
       try {
-        const res = await fetch("https://mylockchaincosmos.herokuapp.com/sendReceipt", {
+        const res = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/sendReceipt", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
