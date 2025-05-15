@@ -131,7 +131,10 @@ const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
 app.post("/getDetails", async (req, res) => {
   try {
     const { hashHex } = req.body;
-    if (!hashHex) throw new Error("Missing hashHex");
+    if (!hashHex || typeof hashHex !== 'string' || !hashHex.startsWith('0x')) {
+  throw new Error("Invalid or missing hashHex");
+}
+
 
     const client = await SigningCosmWasmClient.connect(COSMOS_RPC);
     const hashBase64 = Buffer.from(hashHex.replace(/^0x/, ''), 'hex').toString('base64');
