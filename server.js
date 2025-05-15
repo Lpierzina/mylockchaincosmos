@@ -146,6 +146,7 @@ const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
     res.status(500).json({ error: err.message });
   }
 });
+console.log("✅ Loaded all routes. Server about to start...");
 
 // 🚀 Start the server
 app.listen(PORT, () => {
