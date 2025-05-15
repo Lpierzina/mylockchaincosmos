@@ -29,6 +29,7 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
     const { registrant, timestamp } = await detailsRes.json();
     const readableTime = new Date(timestamp * 1000).toLocaleString();
 
+
     // 🧾 Render Cosmos receipt
     const receiptEl = document.getElementById("receipt");
     const contentEl = document.getElementById("receiptContent");
