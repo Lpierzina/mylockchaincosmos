@@ -106,20 +106,31 @@ const msg = {
 app.post("/checkRegistration", async (req, res) => {
   try {
     const { hashHex } = req.body;
-    if (!hashHex) throw new Error("Missing hashHex");
+    if (!hashHex || typeof hashHex !== 'string' || !hashHex.startsWith('0x')) {
+      throw new Error("Invalid or missing hashHex");
+    }
 
     const client = await SigningCosmWasmClient.connect(COSMOS_RPC);
     const hashBase64 = Buffer.from(hashHex.replace(/^0x/, ''), 'hex').toString('base64');
 
-const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
-  IsRegistered: {
-    document_hash: hashBase64,
-  },
-});
+    let isRegistered = false;
 
-    console.log("✅ Query result for checkRegistration:", result);
+    try {
+      const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
+        IsRegistered: {
+          document_hash: hashBase64,
+        },
+      });
 
-    res.json({ isRegistered: result.is_registered ?? false }); // <-- fix
+      console.log("✅ Query result for checkRegistration:", result);
+
+      isRegistered = result?.is_registered ?? false;
+    } catch (queryErr) {
+      console.warn("ℹ️ Contract returned empty or invalid response:", queryErr.message);
+      isRegistered = false;
+    }
+
+    res.json({ isRegistered });
 
   } catch (err) {
     console.error("/checkRegistration error:", err);
@@ -127,23 +138,46 @@ const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
   }
 });
 
+
 // 📋 /getDetails
 app.post("/getDetails", async (req, res) => {
   try {
     const { hashHex } = req.body;
     if (!hashHex || typeof hashHex !== 'string' || !hashHex.startsWith('0x')) {
-  throw new Error("Invalid or missing hashHex");
-}
-
+      throw new Error("Invalid or missing hashHex");
+    }
 
     const client = await SigningCosmWasmClient.connect(COSMOS_RPC);
     const hashBase64 = Buffer.from(hashHex.replace(/^0x/, ''), 'hex').toString('base64');
 
-const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
-  GetDetails: {
-    document_hash: hashBase64,
-  },
+    let result;
+
+    try {
+      result = await client.queryContractSmart(CONTRACT_ADDRESS, {
+        GetDetails: {
+          document_hash: hashBase64,
+        },
+      });
+    } catch (queryErr) {
+      console.warn("ℹ️ Document not found or invalid JSON in getDetails:", queryErr.message);
+      throw new Error("Document not found in contract");
+    }
+
+    if (!result || !result.registrant || !result.timestamp) {
+      throw new Error("Incomplete document details from contract");
+    }
+
+    res.json({
+      registrant: result.registrant,
+      timestamp: result.timestamp,
+    });
+
+  } catch (err) {
+    console.error("/getDetails error:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
+
 
 
     res.json({
