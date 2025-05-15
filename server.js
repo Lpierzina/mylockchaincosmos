@@ -117,6 +117,7 @@ const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
   },
 });
 
+    console.log("✅ Query result for checkRegistration:", result);
 
     res.json({ isRegistered: result });
   } catch (err) {
