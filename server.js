@@ -76,11 +76,15 @@ app.post("/cosmosSubmitDocument", async (req, res) => {
     if (!documentHash) throw new Error("Missing documentHash");
 
     const { client, sender } = await getClient();
-    const msg = {
-      register: {
-        document_hash: fromHex(documentHash.replace(/^0x/, "")),
-      },
-    };
+    const hashHex = documentHash.replace(/^0x/, '');
+const hashBase64 = Buffer.from(hashHex, 'hex').toString('base64');
+
+const msg = {
+  Register: {
+    document_hash: hashBase64,
+  },
+};
+    console.log("📤 Executing register() on Cosmos contract with base64:", hashBase64);
 
     const result = await client.execute(sender, CONTRACT_ADDRESS, msg, {
       amount: [{ denom: GAS_DENOM, amount: FEE_AMOUNT }],
@@ -101,11 +105,14 @@ app.post("/checkRegistration", async (req, res) => {
     if (!hashHex) throw new Error("Missing hashHex");
 
     const client = await SigningCosmWasmClient.connect(COSMOS_RPC);
-    const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
-      is_registered: {
-        document_hash: fromHex(hashHex.replace(/^0x/, "")),
-      },
-    });
+    const hashBase64 = Buffer.from(hashHex.replace(/^0x/, ''), 'hex').toString('base64');
+
+const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
+  IsRegistered: {
+    document_hash: hashBase64,
+  },
+});
+
 
     res.json({ isRegistered: result });
   } catch (err) {
@@ -121,11 +128,14 @@ app.post("/getDetails", async (req, res) => {
     if (!hashHex) throw new Error("Missing hashHex");
 
     const client = await SigningCosmWasmClient.connect(COSMOS_RPC);
-    const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
-      get_details: {
-        document_hash: fromHex(hashHex.replace(/^0x/, "")),
-      },
-    });
+    const hashBase64 = Buffer.from(hashHex.replace(/^0x/, ''), 'hex').toString('base64');
+
+const result = await client.queryContractSmart(CONTRACT_ADDRESS, {
+  GetDetails: {
+    document_hash: hashBase64,
+  },
+});
+
 
     res.json({
       registrant: result.registrant,

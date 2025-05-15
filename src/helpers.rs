@@ -18,10 +18,11 @@ impl CwTemplateContract {
     pub fn call<T: Into<ExecuteMsg>>(&self, msg: T) -> StdResult<CosmosMsg> {
         let msg = to_json_binary(&msg.into())?;
         Ok(WasmMsg::Execute {
-            contract_addr: self.addr().into(),
-            msg,
-            funds: vec![],
+            contract_addr: self.addr().into(), // The contract address to call
+            msg, // The message to be executed
+            funds: vec![],  // No funds are sent with this message
         }
         .into())
     }
 }
+// This is a convenience function to create a new CwTemplateContract
