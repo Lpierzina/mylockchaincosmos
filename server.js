@@ -179,16 +179,6 @@ app.post("/getDetails", async (req, res) => {
 });
 
 
-
-    res.json({
-      registrant: result.registrant,
-      timestamp: result.timestamp,
-    });
-  } catch (err) {
-    console.error("/getDetails error:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
 console.log("✅ Loaded all routes. Server about to start...");
 
 // 🚀 Start the server
