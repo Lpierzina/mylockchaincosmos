@@ -1,5 +1,6 @@
 window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileName }) {
   try {
+    // 1. Submit the document hash to your backend
     const cosmosRes = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/cosmosSubmitDocument", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -8,18 +9,27 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
 
     const { transactionHash } = await cosmosRes.json();
 
-    // Add a delay before checking registration
-    await new Promise(r => setTimeout(r, 2000));
+    // 2. Wait up to 15 seconds for Neutron to index the tx
+    let isRegistered = false;
+    for (let i = 0; i < 5; i++) {
+      const checkRes = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/checkRegistration", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hashHex }),
+      });
 
-    const checkRes = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/checkRegistration", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ hashHex }),
-    });
+      const json = await checkRes.json();
+      isRegistered = json.isRegistered;
+      if (isRegistered) break;
 
-    const { isRegistered } = await checkRes.json();
+      console.warn(`⏳ Not registered yet, retrying... (${i + 1}/5)`);
+      await new Promise(r => setTimeout(r, 3000)); // wait 3s
+    }
+
     if (!isRegistered) throw new Error("Document not registered yet.");
+    console.log("✅ Document registered successfully.");
 
+    // 3. Fetch registration details
     const detailsRes = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/getDetails", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -29,8 +39,7 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
     const { registrant, timestamp } = await detailsRes.json();
     const readableTime = new Date(timestamp * 1000).toLocaleString();
 
-
-    // 🧾 Render Cosmos receipt
+    // 4. Render receipt
     const receiptEl = document.getElementById("receipt");
     const contentEl = document.getElementById("receiptContent");
     const qrCodeEl = document.getElementById("qrCode");
@@ -57,7 +66,7 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
     receiptEl.style.display = 'block';
     receiptEl.scrollIntoView({ behavior: 'smooth' });
 
-    // 📧 Send Receipt Email Function
+    // 5. Optional email receipt
     window.sendReceiptByEmail = async function () {
       const email = document.getElementById("emailInput").value;
       if (!email || !email.includes("@")) {
@@ -97,7 +106,5 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
     alert("❌ Submission failed: " + err.message);
   }
 };
-// This function handles the submission of a document hash to the Cosmos blockchain.
-// It sends the hash to the backend, waits for confirmation, and then fetches the registration details.
-// It also provides a feature to send the receipt via email.
-// It uses the Fetch API to communicate with the backend and QRCode.js to generate a QR code for the IPFS link.
+// This function handles the submission of a document hash to the Cosmos blockchain and retrieves the registration details.
+// It also provides an option to send the receipt via email.
