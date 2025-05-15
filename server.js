@@ -140,6 +140,7 @@ app.post("/checkRegistration", async (req, res) => {
 
 
 // 📋 /getDetails
+// 📋 /getDetails
 app.post("/getDetails", async (req, res) => {
   try {
     const { hashHex } = req.body;
@@ -151,19 +152,18 @@ app.post("/getDetails", async (req, res) => {
     const hashBase64 = Buffer.from(hashHex.replace(/^0x/, ''), 'hex').toString('base64');
 
     let result;
-
     try {
       result = await client.queryContractSmart(CONTRACT_ADDRESS, {
         GetDetails: {
           document_hash: hashBase64,
         },
       });
-    } catch (queryErr) {
-      console.warn("ℹ️ Document not found or invalid JSON in getDetails:", queryErr.message);
-      throw new Error("Document not found in contract");
+    } catch (innerErr) {
+      console.warn("ℹ️ Document not found or invalid response in getDetails:", innerErr.message);
+      return res.status(404).json({ error: "Document not found in contract." });
     }
 
-    if (!result || !result.registrant || !result.timestamp) {
+    if (!result || typeof result !== 'object' || !result.registrant || !result.timestamp) {
       throw new Error("Incomplete document details from contract");
     }
 
@@ -177,6 +177,7 @@ app.post("/getDetails", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 console.log("✅ Loaded all routes. Server about to start...");
