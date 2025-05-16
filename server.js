@@ -5,7 +5,7 @@ const { SigningCosmWasmClient } = require("@cosmjs/cosmwasm-stargate");
 const { fromHex } = require("@cosmjs/encoding");
 const cors = require("cors");
 const path = require("path");
-
+const nodemailer = require("nodemailer");
 
 
 
@@ -177,6 +177,62 @@ app.post("/getDetails", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+
+app.post("/sendReceipt", async (req, res) => {
+  try {
+    const {
+      email,
+      fileName,
+      ipfsHash,
+      hashHex,
+      txHash,
+      registrant,
+      timestamp,
+      contractAddress,
+      contractExplorerUrl,
+      transactionExplorerUrl,
+    } = req.body;
+
+    const readableTime = new Date(timestamp * 1000).toLocaleString();
+
+    const htmlBody = `
+      <h2>📄 LockChain Registration Receipt</h2>
+      <ul>
+        <li><strong>File Name:</strong> ${fileName}</li>
+        <li><strong>IPFS CID:</strong> ${ipfsHash}</li>
+        <li><strong>Document Hash:</strong> ${hashHex}</li>
+        <li><strong>Registered By:</strong> ${registrant}</li>
+        <li><strong>Timestamp:</strong> ${readableTime}</li>
+        <li><strong>Contract:</strong> <a href="${contractExplorerUrl}" target="_blank">${contractAddress}</a></li>
+        <li><strong>Transaction:</strong> <a href="${transactionExplorerUrl}" target="_blank">${txHash}</a></li>
+      </ul>
+    `;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER, // e.g. 'luke@mylockchain.io'
+        pass: process.env.EMAIL_PASS, // Gmail App Password
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: `Your LockChain Receipt for "${fileName}"`,
+      html: htmlBody,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ Email send error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 
 
