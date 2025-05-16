@@ -74,6 +74,8 @@ app.get('/config', (req, res) => {
 
 
 // 🔐 /cosmosSubmitDocument
+// convert hex to base64 for the Rust contract
+
 app.post("/cosmosSubmitDocument", async (req, res) => {
   try {
     const { documentHash } = req.body;
@@ -103,6 +105,9 @@ const msg = {
 });
 
 // 🔎 /checkRegistration
+// this endpoint checks if a document is registered
+// it returns a boolean isRegistered
+// it also returns the hashHex
 app.post("/checkRegistration", async (req, res) => {
   try {
     const { hashHex } = req.body;
@@ -141,6 +146,16 @@ app.post("/checkRegistration", async (req, res) => {
 
 // 📋 /getDetails
 // 📋 /getDetails
+// this endpoint checks if a document is registered
+// it returns a boolean isRegistered
+// it also returns the hashHex
+// it also returns the registrant and timestamp
+// it also returns the contract address
+// it also returns the transaction hash
+// it also returns the contract explorer url
+// it also returns the transaction explorer url
+
+
 app.post("/getDetails", async (req, res) => {
   try {
     const { hashHex } = req.body;
@@ -179,6 +194,8 @@ app.post("/getDetails", async (req, res) => {
 });
 
 
+// 📧 /sendReceipt
+// this endpoint sends an email receipt to the user
 
 app.post("/sendReceipt", async (req, res) => {
   try {

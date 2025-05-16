@@ -297,6 +297,8 @@
   color: #333; /* Darker text for better contrast */
   border: 1px solid #b0b0b0; /* Adds a subtle border */
   box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2); /* Soft shadow effect */
+  margin: 20px auto;
+  max-width: 800px;
 }
 
 
@@ -821,7 +823,8 @@ while its hash blasts off to Neutron’s smart contract layer for permanent regi
 
 </div> <!-- closes .container -->
 
-
+<!-- ✅ Start new container for Step 3 and Bonus -->
+<div class="container">
 <!-- Step 3: Save Your Transaction Receipt & IPFS Hash -->
 	  <div class="shade-box">
 <div style="margin-top:30px;">
@@ -838,6 +841,26 @@ while its hash blasts off to Neutron’s smart contract layer for permanent regi
     <button onclick="verifyDocument()">Verify Document</button>
 
  </div>
+
+
+ <div class="shade-box" style="margin-top: 40px;">
+  <h3>Why Cosmos + Rust?</h3>
+  <p>
+    Unlike Ethereum-based contracts written in Solidity, MyLockChain uses <strong>CosmWasm</strong> — a secure and efficient smart contract framework powered by the <strong>Cosmos SDK</strong>. These contracts are written in <strong>Rust</strong>, which offers memory safety and formal verification benefits.
+  </p>
+  <p>
+    When we register your file on-chain, we <strong>convert the document hash from hex to base64</strong>. This is because Rust-based contracts require base64 input for optimal compatibility and security.
+  </p>
+  <p>
+    Cosmos contracts are known for:
+    <ul>
+      <li>✅ Faster finality than Ethereum</li>
+      <li>✅ Lower fees (paid in $NTRN instead of ETH)</li>
+      <li>✅ Cross-chain integration via IBC</li>
+      <li>✅ Rust-level security guarantees</li>
+    </ul>
+  </p>
+</div>
 
 
 	<!-- ⬇️ Collapsed UI Sections moved below Step 3 -->
@@ -885,6 +908,9 @@ while its hash blasts off to Neutron’s smart contract layer for permanent regi
 </div>
 
 	 </div>
+</div> <!-- closes new container -->
+
+
 
 <!-- Spinner Overlay -->
 <div id="loadingOverlay">
