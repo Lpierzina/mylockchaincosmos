@@ -769,36 +769,42 @@ while its hash blasts off to Neutron’s smart contract layer for permanent regi
 
 
   <!-- Step 2: Pin to IPFS -->
-  <div class="shade-box">
-<h3>Step 2: Pin Your Document on IPFS</h3>
-<p>
-  <strong>Upload &amp; Hash Document.</strong><br/>
-  - Click “Upload &amp; Hash Document” to pin the file on IPFS.<br/>
-  - <strong>Pinning</strong> means we keep a copy of your file on IPFS indefinitely,
-    so it’s always available—even if your computer is offline.<br/>
-  - <em>Why?</em> Your document is now decentralized and tamper-evident—any change
-    produces a new IPFS hash, revealing any forgery.
-</p>
+<div class="shade-box">
+  <h3>Step 2: Pin Your Document on IPFS</h3>
+  <p>
+    <strong>Upload &amp; Hash Document.</strong><br/>
+    - Click “Upload &amp; Hash Document” to pin the file on IPFS.<br/>
+    - <strong>Pinning</strong> means we keep a copy of your file on IPFS indefinitely,
+      so it’s always available—even if your computer is offline.<br/>
+    - <em>Why?</em> Your document is now decentralized and tamper-evident—any change
+      produces a new IPFS hash, revealing any forgery.
+  </p>
 
-<!-- Background image section -->
-<div class="ipfs-section">
-	</div>
+  <!-- 🌌 Background image section with overlay content -->
+  <div class="ipfs-section" style="background-image: url('/mylockchain-cosmos-logo.png');">
+    <h3>IPFS Document Storage</h3>
+    <p>Pinned across the Cosmos. Immutable. Permanent. Decentralized.</p>
+  </div>
+
   <p>
     <strong>Pinning Fees &amp; File Size Limits:</strong><br/>
     - Files up to 0.5MB: <strong>$3</strong><br/>
-    - 0.5MB &ndash; 5MB: <strong>$5</strong><br/>
-    - 5MB &ndash; 20MB: <strong>$10</strong><br/>
-    - 20MB &ndash; 50MB: <strong>$15</strong><br/>
+    - 0.5MB – 5MB: <strong>$5</strong><br/>
+    - 5MB – 20MB: <strong>$10</strong><br/>
+    - 20MB – 50MB: <strong>$15</strong><br/>
     - <em>Note:</em> Files over 50MB aren’t allowed.
-      </p>
+  </p>
+
   <p>
     <em>Why Pin?</em> Without pinning, your file might be garbage-collected if no node
     hosts it. Pinning ensures permanence in the decentralized network.
   </p>
-  <!-- The "Upload and Hash Document" button -->
+
+  <!-- Upload and hash button -->
   <button id="uploadBtn" onclick="handleFileAndPayment()">Upload and Hash Document</button>
   <div id="paypal-button-container" style="display:none; margin-bottom:20px;"></div>
   <p id="hashOutput"></p>
+</div>
 
 
 
