@@ -1,6 +1,6 @@
-# MyLockChainCosmos
+# 🌌 MyLockChainCosmos
 
-MyLockChainCosmos is a decentralized document registration platform that allows users to securely store and verify documents on the Cosmos blockchain using CosmWasm smart contracts, IPFS for decentralized storage, and PayPal for fiat payments. It is a fully serverless, walletless experience where the gas cost is sponsored by MyLockChainCosmos.
+MyLockChainCosmos is your interstellar document vault — a decentralized registration platform that anchors your files into the Cosmos itself. Using CosmWasm smart contracts on Neutron, IPFS via Pinata, and PayPal for fiat payments, MyLockChainCosmos ensures your records live on chain and off-world. Gas fees are sponsored, so you can register proof-of-existence across the stars — no wallet required.
 
 ---
 
@@ -166,5 +166,5 @@ The entire `index.html` + assets can be deployed to [Netlify](https://netlify.ap
 
 ## 🏦 Contact
 
-Email: [contact@mylockchain.io](mailto:contact@mylockchain.io)
-Twitter: [@MyLockChain](https://twitter.com/MyLockChain)
+Email: [contact@mylockchain.io](mailto:Luke@mylockchain.io)
+
