@@ -1,94 +1,170 @@
-# CosmWasm Starter Pack
+# MyLockChainCosmos
 
-This is a template to build smart contracts in Rust to run inside a
-[Cosmos SDK](https://github.com/cosmos/cosmos-sdk) module on all chains that enable it.
-To understand the framework better, please read the overview in the
-[cosmwasm repo](https://github.com/CosmWasm/cosmwasm/blob/master/README.md),
-and dig into the [cosmwasm docs](https://www.cosmwasm.com).
-This assumes you understand the theory and just want to get coding.
+MyLockChainCosmos is a decentralized document registration platform that allows users to securely store and verify documents on the Cosmos blockchain using CosmWasm smart contracts, IPFS for decentralized storage, and PayPal for fiat payments. It is a fully serverless, walletless experience where the gas cost is sponsored by MyLockChainCosmos.
 
-## Creating a new repo from template
+---
 
-Assuming you have a recent version of Rust and Cargo installed
-(via [rustup](https://rustup.rs/)),
-then the following should get you a new repo to start a contract:
+## 🚀 Overview
 
-{"name":"mylockchaincosmos","type":"local","address":"neutron1a4rznzgdfc5xdt38wndn6drkz7yhaj4yms07kk","pubkey":"{\"@type\":\"/cosmos.crypto.secp256k1.PubKey\",\"key\":\"AzRwJKV38XWS2wxR1CLcItvYIJ2HBzo3qCrwpfmrueiD\"}","mnemonic":"chaos connect mule suggest paper horror shell issue bus march fall talent yellow game sign caution loan rack else vital carpet inhale repair uncle"}
+* **Frontend**: `index.html` + `submitUserOps.js`
+* **Backend**: `server.js` (Node + Express + CosmJS + Nodemailer)
+* **Blockchain**: Rust-based CosmWasm contract deployed on Neutron (Cosmos SDK chain)
+* **Storage**: IPFS via Pinata
+* **Payment**: PayPal (USD to cover IPFS pinning)
+* **Gas**: \~0.012 NTRN per transaction (sponsored)
 
+---
 
-**Important** write this mnemonic phrase in a safe place.
-It is the only way to recover your account if you ever forget your password.
+## ✅ Features
 
-plug note post leaf away hard jar build fresh aspect strategy trim pudding bounce fork exile vault focus lecture define cricket assault velvet can
+* Upload any document (PDF, JPG, PNG, MP4, etc.)
+* Hash using SHA-256 (client-side)
+* Store file on IPFS via Pinata
+* Register hash to a Neutron smart contract (Rust)
+* View or email your receipt (includes tx hash, IPFS CID, QR code)
 
+---
 
-Install [cargo-generate](https://github.com/ashleygwilliams/cargo-generate) and cargo-run-script.
-Unless you did that before, run this line now:
+## ⚖️ Security Model
 
-```sh
-cargo install cargo-generate --features vendored-openssl
-cargo install cargo-run-script
+* Hash is computed **client-side** before uploading
+* Only the hash is sent to the blockchain, ensuring **file privacy**
+* Rust smart contract saves the `document_hash`, `registrant`, and `timestamp`
+* All timestamps are block-anchored and immutable
+
+---
+
+## ✈️ Flow Diagram (Mermaid Sequence)
+
+```mermaid
+sequenceDiagram
+  participant User (Browser)
+  participant Website (index.html + submitUserOps.js)
+  participant PayPal
+  participant Pinata (IPFS)
+  participant Server (server.js)
+  participant Contract (Rust Smart Contract on Neutron)
+  participant Email (Nodemailer)
+
+  User->>Website: Select and upload document
+  Website->>Website: Compute SHA-256 hash
+  Website->>PayPal: Trigger PayPal payment
+  PayPal-->>Website: Confirm payment
+
+  Website->>Pinata: Upload document to IPFS
+  Pinata-->>Website: Return IPFS CID
+
+  Website->>submitUserOp.js: Pass hashHex + IPFS CID
+  submitUserOp.js->>Server: POST /cosmosSubmitDocument (hashHex only)
+  Server->>Server: Convert hashHex to base64
+  Server->>Contract: Register { document_hash (base64) }
+  Contract->>Contract: Save registrant & timestamp
+  Contract-->>Server: Return txHash
+
+  Server-->>submitUserOp.js: Return txHash
+  submitUserOp.js->>Server: POST /checkRegistration (retry loop)
+  Server->>Contract: Query IsRegistered
+  Contract-->>Server: true
+
+  submitUserOp.js->>Server: POST /getDetails
+  Server->>Contract: Query GetDetails
+  Contract-->>Server: Return registrant & timestamp
+
+  Server-->>submitUserOp.js: Return registration details
+  submitUserOp.js->>Website: Render receipt (CID, hash, txHash, QR)
+  Website->>User: Show receipt + email input field
+
+  User->>Website: Enter email + click "Send Receipt"
+  Website->>Server: POST /sendReceipt (receipt + email)
+  Server->>Email: Send via nodemailer
+  Email-->>User: 📩 Receipt delivered to inbox
+
+  Note over Contract: Rust Smart Contract on Neutron\nGas: ~0.012 NTRN per tx\nSponsored by MyLockChainCosmos
 ```
 
-Now, use it to create your new contract.
-Go to the folder in which you want to place it and run:
+---
 
-**Latest**
+## 🏛 Smart Contract Modules
 
-```sh
-cargo generate --git https://github.com/CosmWasm/cw-template.git --name PROJECT_NAME
+* `contract.rs` - handles instantiation, execution, and queries
+* `msg.rs` - defines `Register`, `GetDetails`, and `IsRegistered` message types
+* `state.rs` - stores mappings for document hash to registrant and timestamp
+* `helpers.rs` - utility logic for hash encoding
+* `error.rs` - custom contract errors
+* `lib.rs` - entry point for compilation
+
+---
+
+## ⚖️ Example Receipt (UI or Email)
+
+```
+📄 LockChain Registration Receipt
+
+File Name: title_deed.pdf
+IPFS CID: QmXYZ...
+Document Hash: 0xabc123...
+Registered By: neutron1...
+Timestamp: 2024-05-16 14:23:00
+Contract: https://www.mintscan.io/neutron/account/neutron1...
+Transaction: https://www.mintscan.io/neutron/tx/ABCDEF123...
 ```
 
-For cloning minimal code repo:
+---
 
-```sh
-cargo generate --git https://github.com/CosmWasm/cw-template.git --name PROJECT_NAME -d minimal=true
+## ✉️ Email Delivery (Nodemailer)
+
+When the user enters their email, `server.js` sends a structured HTML email using Gmail + App Password:
+
+* Uses `EMAIL_USER` + `EMAIL_PASS` from `.env`
+* HTML body matches on-screen receipt
+* Delivered to inbox with subject: `Your LockChain Receipt for "filename.pdf"`
+
+---
+
+## 🚪 Privacy
+
+* No documents are stored on-chain
+* Hashing is deterministic, privacy-preserving
+* Email is stored client-side only (via localStorage) and never persisted
+
+---
+
+## 🌌 Powered By
+
+* [Neutron](https://neutron.org/) - CosmWasm smart contracts on Cosmos
+* [Pinata](https://www.pinata.cloud/) - IPFS file pinning
+* [PayPal](https://paypal.com) - User-friendly fiat payments
+* [CosmJS](https://github.com/cosmos/cosmjs) - JS library for interacting with CosmWasm contracts
+* [Nodemailer](https://nodemailer.com/) - Email receipts
+
+---
+
+## 🔧 Setup (Backend)
+
+```bash
+# Install dependencies
+npm install
+
+# Set up .env file
+COSMOS_MNEMONIC=...
+COSMOS_RPC=https://...
+CONTRACT_ADDRESS=neutron1...
+EMAIL_USER=...
+EMAIL_PASS=...
+
+# Start the server
+node server.js
 ```
 
-You will now have a new folder called `PROJECT_NAME` (I hope you changed that to something else)
-containing a simple working contract and build system that you can customize.
+---
 
-## Create a Repo
+## 🌐 Frontend Hosting
 
-After generating, you have a initialized local git repo, but no commits, and no remote.
-Go to a server (eg. github) and create a new upstream repo (called `YOUR-GIT-URL` below).
-Then run the following:
+The entire `index.html` + assets can be deployed to [Netlify](https://netlify.app), Vercel, or GitHub Pages.
 
-```sh
-# this is needed to create a valid Cargo.lock file (see below)
-cargo check
-git branch -M main
-git add .
-git commit -m 'Initial Commit'
-git remote add origin YOUR-GIT-URL
-git push -u origin main
-```
+---
 
-## CI Support
+## 🏦 Contact
 
-We have template configurations for both [GitHub Actions](.github/workflows/Basic.yml)
-and [Circle CI](.circleci/config.yml) in the generated project, so you can
-get up and running with CI right away.
-
-One note is that the CI runs all `cargo` commands
-with `--locked` to ensure it uses the exact same versions as you have locally. This also means
-you must have an up-to-date `Cargo.lock` file, which is not auto-generated.
-The first time you set up the project (or after adding any dep), you should ensure the
-`Cargo.lock` file is updated, so the CI will test properly. This can be done simply by
-running `cargo check` or `cargo unit-test`.
-
-## Using your project
-
-Once you have your custom repo, you should check out [Developing](./Developing.md) to explain
-more on how to run tests and develop code. Or go through the
-[online tutorial](https://docs.cosmwasm.com/) to get a better feel
-of how to develop.
-
-[Publishing](./Publishing.md) contains useful information on how to publish your contract
-to the world, once you are ready to deploy it on a running blockchain. And
-[Importing](./Importing.md) contains information about pulling in other contracts or crates
-that have been published.
-
-Please replace this README file with information about your specific project. You can keep
-the `Developing.md` and `Publishing.md` files as useful references, but please set some
-proper description in the README.
+Email: [contact@mylockchain.io](mailto:contact@mylockchain.io)
+Twitter: [@MyLockChain](https://twitter.com/MyLockChain)
