@@ -43,25 +43,20 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-
-
   <style>
     body {
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(to bottom right, #0d0c1d, #1b2735, #090a0f);
-  color: #e0e6ed;
+      font-family: 'Roboto', Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
       margin: 0;
       padding: 0;
     }
     .navbar {
-  background: linear-gradient(to right, #2d00f7, #6a00f4, #a100f2, #d100e1, #f200c4);
-  color: #ffffff;
-  padding: 20px;
-  text-align: center;
-  font-family: 'Orbitron', sans-serif;
-}
-
+      background-color: #1e429f;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
     .navbar h1 {
       margin: 0;
       font-size: 24px;
@@ -319,31 +314,18 @@
 
     /* Spinner Overlay */
     #loadingOverlay {
-  display: flex;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
-}
-
-#loadingOverlay p {
-  color: white;
-  font-size: 20px;
-  font-family: 'Orbitron', sans-serif;
-  white-space: pre-wrap;
-  max-width: 80%;
-}
-
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
     .spinner {
       border: 8px solid #f3f3f3;
       border-top: 8px solid #1e429f;
@@ -386,12 +368,8 @@
 
 <body>
 <div class="navbar">
-  <h1>🚀 MyLockChainCosmos.io</h1>
-  <p style="font-size: 14px; margin-top: 5px; font-weight: bold;">
-    InterPlanetary Proof-of-Existence via Cosmos Hub 🌌
-  </p>
+    <h1>MyLockChain - Lock Down Your Title</h1>
 </div>
-
 
 <div class="container">
 
@@ -400,17 +378,17 @@
 
 
     <p>
-Welcome to the decentralized frontier of title verification — where your PDFs orbit the Cosmos,
-and hashes are immortalized as celestial signatures on the blockchain. Powered by **Neutron**,
-secured by **ATOMs**, and blessed by the Interchain gods. 🚀
-</p>
-<p>
-    MyLockChain is your go-to solution for securely storing and verifying important documents like
-    title deeds, contracts, and more. We leverage the power of **IPFS** (InterPlanetary File System)
-    and blockchain technology to ensure your files are tamper-proof, decentralized, and always accessible.
+      Manage and verify title deeds and important documents securely using blockchain and IPFS technology.
+        By uploading a title deed or any PDF document, we generate a unique "hash" for the document,
+        which acts like a digital fingerprint. This hash is stored securely on the
+        blockchain, ensuring tamper-proof authenticity. The hashing process is a
+        one-way mathematical function that converts your document into a fixed
+        string of characters, making it impossible to recreate the original document
+        from the hash. This ensures that your document is both private and secure,
+      while allowing easy verification of its integrity.</p>
 
 	<p>
-    <strong>No technical skills required</strong> – Just upload your document, let MyLockChain handle the security, and relax knowing your records are safe and verifiable anytime. Walk through the 3 easy steps below.
+    **No technical skills required** – Just upload your document, let MyLockChain handle the security, and relax knowing your records are safe and verifiable anytime. Walk through the 3 easy steps below.
 </p>
 
   <!-- "How to Use" button + hidden 6 steps -->
@@ -430,12 +408,6 @@ secured by **ATOMs**, and blessed by the Interchain gods. 🚀
  <h3>Step 2: Pin Your Document on IPFS</h3>
 <p>
   <strong>Upload &amp; Hash Document.</strong><br/>
-<p>
-Your deed isn’t just stored. It’s <em>cosmically pinned</em> to a constellation of IPFS nodes,
-while its hash blasts off to Neutron’s smart contract layer for permanent registration.
-</p>
-
-
   - Click “Upload &amp; Hash Document” to pin the file on IPFS.<br/>
   - <strong>Pinning</strong> means we keep a copy of your file on IPFS indefinitely,
     so it’s always available—even if your computer is offline.<br/>
@@ -459,10 +431,11 @@ while its hash blasts off to Neutron’s smart contract layer for permanent regi
 
   <h3>Step 3: Save Your Transaction Receipt &amp; IPFS Hash</h3>
   <p>
-  Upon cosmic registration, you’ll receive an interstellar receipt (tx hash) proving your document’s orbit.<br/>
-  If anyone on Earth—or Mars—needs to verify it, just compare the file’s hash with what's etched in the chain.
-</p>
-
+    <strong>Keep Your Receipt &amp; Hash Safe.</strong><br/>
+    - You’ll get a transaction receipt with a unique transaction hash.<br/>
+    - Store it in a safe place. It proves exactly when your file was pinned and recorded on-chain.<br/>
+    - If you or anyone needs to verify authenticity later, just compare the file’s hash to the one on Ethereum.
+  </p>
 </div>
 
 
@@ -896,7 +869,7 @@ while its hash blasts off to Neutron’s smart contract layer for permanent regi
       <strong>Keep Your Receipt &amp; Hash Safe.</strong><br/>
       - You’ll get a transaction receipt with a unique transaction hash.<br/>
       - Store it in a safe place. It proves exactly when your file was pinned and recorded on-chain.<br/>
-      - If you or anyone needs to verify authenticity later, just compare the file’s hash to the one on Mintscan.
+      - If you or anyone needs to verify authenticity later, just compare the file’s hash to the one on Ethereum.
     </p>
   </div>
 
@@ -976,10 +949,8 @@ while its hash blasts off to Neutron’s smart contract layer for permanent regi
 <div id="verificationResult"></div>
 
 <div class="footer">
-  🛰️ A proud project orbiting the <a href="https://cosmos.network" style="color:#00bcd4;" target="_blank">Cosmos Hub</a> | Built on Neutron 🚀<br/>
-  &copy; 2024 MyLockChainCosmos. All Rights Reserved.
+    &copy; 2024 MyLockChain. All Rights Reserved.
 </div>
-
 
 <script>
     let web3;
@@ -1025,64 +996,12 @@ while its hash blasts off to Neutron’s smart contract layer for permanent regi
 
 
     // Loading Overlay
-  let overlayMessages = [
-  "🚀 Converting ATOMs into Neutrons (NTRN)...",
-  "🪐 Locking your title across the Cosmos...",
-  "📡 Broadcasting to Neutron validators...",
-  "🔒 Hash anchored in the Interchain...",
-  "🌌 Document stored beyond time and space..."
-];
-
-let overlayTypingIndex = 0;
-let typingTimer;
-let messageTimer;
-
-function typeText(element, text, i = 0, speed = 40, onComplete) {
-  if (i < text.length) {
-    element.innerText += text.charAt(i);
-    typingTimer = setTimeout(() => typeText(element, text, i + 1, speed, onComplete), speed);
-  } else if (onComplete) {
-    setTimeout(onComplete, 1500); // Pause before next message
-  }
-}
-
-function startOverlayTypingLoop() {
-  const overlayText = document.querySelector('#loadingOverlay p');
-  overlayText.innerText = '';
-
-  const currentMessage = overlayMessages[overlayTypingIndex];
-  typeText(overlayText, currentMessage, 0, 40, () => {
-    overlayTypingIndex = (overlayTypingIndex + 1) % overlayMessages.length;
-    overlayText.innerText = '';
-    messageTimer = setTimeout(startOverlayTypingLoop, 500); // Delay before typing next
-  });
-}
-
-function toggleLoadingOverlay(show) {
-  const overlay = document.getElementById('loadingOverlay');
-
-  if (show) {
-    overlay.style.visibility = 'visible';
-    overlay.style.opacity = '1';
-
-    overlayTypingIndex = 0;
-    clearTimeout(typingTimer);
-    clearTimeout(messageTimer);
-    startOverlayTypingLoop();
-  } else {
-    overlay.style.opacity = '0';
-    setTimeout(() => {
-      overlay.style.visibility = 'hidden';
-      const overlayText = overlay.querySelector('p');
-      overlayText.innerText = '';
-    }, 300);
-
-    clearTimeout(typingTimer);
-    clearTimeout(messageTimer);
-  }
-}
-
-
+    function toggleLoadingOverlay(show) {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = show ? 'flex' : 'none';
+        }
+    }
 
 async function registerWithPaypal() {
   if (!hashHex || !ipfsHash) {
