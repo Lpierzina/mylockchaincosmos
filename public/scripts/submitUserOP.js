@@ -1,5 +1,9 @@
 window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileName }) {
   try {
+    const contractAddress = "neutron1wgcgraqew83d9k2wtkvwldrwml8dg7gpyvf6gymhz2n0x6vrkwjqx2htpr"; // latest from deployment
+    const contractLink = `https://www.mintscan.io/neutron/account/${contractAddress}`;
+    const ipfsLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+
     // 1. Submit the document hash to your backend
     const cosmosRes = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/cosmosSubmitDocument", {
       method: "POST",
@@ -8,8 +12,9 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
     });
 
     const { transactionHash } = await cosmosRes.json();
+    const txLink = `https://www.mintscan.io/neutron/tx/${transactionHash}`;
 
-    // 2. Wait up to 15 seconds for Neutron to index the tx
+    // 2. Wait up to 15 seconds for registration confirmation
     let isRegistered = false;
     for (let i = 0; i < 5; i++) {
       const checkRes = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/checkRegistration", {
@@ -43,7 +48,6 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
     const receiptEl = document.getElementById("receipt");
     const contentEl = document.getElementById("receiptContent");
     const qrCodeEl = document.getElementById("qrCode");
-    const ipfsLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
 
     contentEl.innerHTML = `
       <h2>📄 Your LockChain Registration Receipt</h2>
@@ -53,16 +57,22 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
         <li><strong>Document Hash:</strong> ${hashHex}</li>
         <li><strong>Registered By:</strong> ${registrant}</li>
         <li><strong>Timestamp:</strong> ${readableTime}</li>
-        <li><strong>Contract:</strong> <a href="https://explorer.ntrn.tech/neutron/account/neutron167ty2yfhcjupcwrqq8zr3cst09zn2t3sfcrhxrhpqcvjexv72ufqe8gckq" target="_blank">View on Neutron Explorer</a></li>
-        <li><strong>Transaction:</strong> <a href="https://explorer.ntrn.tech/neutron/tx/${transactionHash.toLowerCase()}" target="_blank">${transactionHash}</a></li>
+        <li><strong>Contract:</strong> <a href="${contractLink}" target="_blank">View on Neutron Explorer</a></li>
+        <li><strong>Transaction:</strong> <a href="${txLink}" target="_blank">${transactionHash}</a></li>
       </ul>
       <label for="email">📧 Want a copy of this receipt by email?</label>
       <input type="email" id="emailInput" placeholder="you@example.com" />
       <button onclick="sendReceiptByEmail()">Send Receipt</button>
     `;
 
-    qrCodeEl.innerHTML = '';
-    new QRCode(qrCodeEl, ipfsLink);
+    // QR code safely
+    try {
+      qrCodeEl.innerHTML = '';
+      new QRCode(qrCodeEl, ipfsLink);
+    } catch (qrErr) {
+      console.warn("⚠️ QR Code generation failed:", qrErr.message);
+    }
+
     receiptEl.style.display = 'block';
     receiptEl.scrollIntoView({ behavior: 'smooth' });
 
@@ -73,6 +83,8 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
         alert("Please enter a valid email address.");
         return;
       }
+
+      localStorage.setItem("email", email); // store for later
 
       try {
         const res = await fetch("https://mylockchaincosmos-85ea963ef0ae.herokuapp.com/sendReceipt", {
@@ -85,8 +97,11 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
             hashHex,
             txHash: transactionHash,
             registrant,
-            timestamp
-          })
+            timestamp,
+            contractAddress,
+            contractExplorerUrl: contractLink,
+            transactionExplorerUrl: txLink
+          }),
         });
 
         const json = await res.json();
@@ -100,11 +115,8 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
         alert("Error sending receipt. Try again later.");
       }
     };
-
   } catch (err) {
     console.error("❌ Cosmos submit error:", err);
     alert("❌ Submission failed: " + err.message);
   }
 };
-// This function handles the submission of a document hash to the Cosmos blockchain and retrieves the registration details.
-// It also provides an option to send the receipt via email.

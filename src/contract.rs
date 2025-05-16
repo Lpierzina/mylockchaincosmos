@@ -3,7 +3,7 @@ use cosmwasm_std::{
     to_json_binary,
 };
 use crate::error::ContractError;
-use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, DetailsResponse};
+use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg, DetailsResponse, IsRegisteredResponse};
 use crate::state::{REGISTRANT, TIMESTAMPS};
 use hex; // <-- ensure you add this crate in Cargo.toml under [dependencies]
 
@@ -63,10 +63,12 @@ pub fn execute(
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::IsRegistered { document_hash } => {
-            let hash_key = hex::encode(&document_hash);
-            let is_set = REGISTRANT.has(deps.storage, hash_key.as_str());
-            Ok(Binary::from(vec![is_set as u8]))
-        }
+    let hash_key = hex::encode(&document_hash);
+    let is_set = REGISTRANT.has(deps.storage, hash_key.as_str());
+    to_json_binary(&IsRegisteredResponse {
+        is_registered: is_set,
+    })
+}
         QueryMsg::GetDetails { document_hash } => {
             let hash_key = hex::encode(&document_hash);
             let registrant = REGISTRANT.load(deps.storage, hash_key.as_str())?;

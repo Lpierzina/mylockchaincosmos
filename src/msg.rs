@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use cosmwasm_schema::QueryResponses;
 
 
+
 // Empty instantiation message
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
 pub struct InstantiateMsg {}
@@ -17,12 +18,13 @@ pub enum ExecuteMsg {
 // Read-only queries
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema, QueryResponses)]
 pub enum QueryMsg {
-    #[returns(bool)]
-    IsRegistered { document_hash: Binary },  // is the document hash registered
+    #[returns(IsRegisteredResponse)] // ✅ fix this line
+    IsRegistered { document_hash: Binary },
 
     #[returns(DetailsResponse)]
-    GetDetails { document_hash: Binary }, // get details of the document hash
+    GetDetails { document_hash: Binary },
 }
+
 
 // Output format for GetDetails query
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
@@ -30,3 +32,9 @@ pub struct DetailsResponse {
     pub registrant: String,
     pub timestamp: u64,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
+pub struct IsRegisteredResponse {
+    pub is_registered: bool,
+}
+
