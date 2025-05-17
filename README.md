@@ -33,6 +33,20 @@ MyLockChainCosmos is your interstellar document vault — a decentralized regist
 * All timestamps are block-anchored and immutable
 
 ---
+
+##🌠 Base64 Conversion Explained
+
+The CosmWasm smart contract on Neutron requires binary data (like hashes) to be submitted as base64-encoded strings. After the SHA-256 hash is computed (as a hex string), it is converted to base64 before being sent to the blockchain.
+
+Example:
+
+SHA-256 (Hex): 0x8b0d59e7...
+
+Base64: iw1Z5+...==
+
+This format ensures compatibility with CosmWasm message schemas and makes it easy to interoperate with tooling in the Cosmos ecosystem. Receipts and emails include both the hex and base64 representations for clarity and transparency.
+
+---
 ## 🌠 Becoming a Top-Tier DApp in Cosmos
 ## ✈️ Flow Diagram (Mermaid Sequence)
 
