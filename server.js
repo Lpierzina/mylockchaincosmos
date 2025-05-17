@@ -219,7 +219,9 @@ app.post("/sendReceipt", async (req, res) => {
       <ul>
         <li><strong>File Name:</strong> ${fileName}</li>
         <li><strong>IPFS CID:</strong> ${ipfsHash}</li>
-        <li><strong>Document Hash:</strong> ${hashHex}</li>
+        <li><strong>Document Hash (Hex):</strong> ${hashHex}</li>
+        <li><strong>Base64 Format:</strong> ${Buffer.from(hashHex.replace(/^0x/, ''), 'hex').toString('base64')}</li>
+        <li><em>Note:</em> Base64 is required by CosmWasm for storing binary hashes.</li>
         <li><strong>Registered By:</strong> ${registrant}</li>
         <li><strong>Timestamp:</strong> ${readableTime}</li>
         <li><strong>Contract:</strong> <a href="${contractExplorerUrl}" target="_blank">${contractAddress}</a></li>
