@@ -216,6 +216,8 @@ app.post("/sendReceipt", async (req, res) => {
 
     const ipfsLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
 const base64 = Buffer.from(hashHex.replace(/^0x/, ""), "hex").toString("base64");
+const transactionUrl = transactionExplorerUrl || `https://www.mintscan.io/neutron/txs/${txHash}`;
+
 
 const htmlBody = `
   <h2>📄 Your LockChainCosmos Registration Receipt</h2>
@@ -246,7 +248,7 @@ const htmlBody = `
 <p><strong>📡 Contract:</strong> <a href="${contractExplorerUrl}" target="_blank">View on Neutron Explorer</a><br/>
 <em>This smart contract is your ground station — it holds the registration beacon forever on the Neutron chain.</em></p>
 
-<p><strong>💫 Transaction:</strong> <a href="${transactionExplorerUrl}" target="_blank">${txHash}</a><br/>
+<p><strong>💫 Transaction:</strong> <a href="${transactionUrl}" target="_blank">${txHash}</a><br/>
 <em>The rocket that carried your hash into orbit. This transaction is your immutable trail across the Cosmos.</em></p>
 
 `;
