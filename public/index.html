@@ -1489,19 +1489,24 @@ async function uploadToIPFS() {
         fileName: fileToUpload?.name || "(unknown)"
       });
 
-      // ✅ Scroll to Upload Button + animate
-      setTimeout(() => {
-        const uploadBtn = document.getElementById("uploadBtn");
-        if (uploadBtn) {
-          uploadBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          uploadBtn.classList.remove("pulse-once");
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              uploadBtn.classList.add("pulse-once");
-            });
-          });
-        }
-      }, 300);
+      console.log("🔍 Scrolling to uploadBtn...");
+console.log("uploadBtn exists:", !!uploadBtn);
+console.log("uploadBtn visible:", uploadBtn?.offsetParent !== null);
+
+
+      // ✅ Scroll to Step 2 Upload Button AFTER DOM updates
+setTimeout(() => {
+  const uploadBtn = document.getElementById("uploadBtn");
+  if (uploadBtn) {
+    uploadBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Force animation restart
+    uploadBtn.classList.remove("pulse-once");
+    void uploadBtn.offsetWidth;  // 👈 this forces reflow to re-trigger animation
+    uploadBtn.classList.add("pulse-once");
+  }
+}, 500); // Delay must allow the DOM to settle
+
     }
 
   } catch (error) {
