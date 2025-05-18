@@ -329,7 +329,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.1);
   z-index: 1000;
   justify-content: center;
   align-items: center;
@@ -1392,19 +1392,6 @@ async function handleFileAndPayment() {
     lastUploadedFileName = selectedFile.name;
     document.getElementById('fileNameOutput').innerText = `File Name: ${selectedFile.name}`;
 
-    // 👇 Scroll to the "Upload and Hash Document" button
-    setTimeout(() => {
-        const uploadBtn = document.getElementById("uploadBtn");
-        if (uploadBtn) {
-            console.log("🔍 Scrolling to uploadBtn...");
-            uploadBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            // Restart pulse animation
-            uploadBtn.classList.remove("pulse-once");
-            void uploadBtn.offsetWidth; // trigger reflow
-            uploadBtn.classList.add("pulse-once");
-        }
-    }, 300);
 
     // Decide payment or free upload
     if (fee === 0) {
@@ -1734,7 +1721,25 @@ async function verifyDocument() {
     }
   }
 
-  document.addEventListener("DOMContentLoaded", loadConfig);
+  document.addEventListener("DOMContentLoaded", function () {
+  loadConfig();
+
+  // ✅ Auto-scroll to upload button when file is selected
+  document.getElementById('fileInput').addEventListener('change', function () {
+    const uploadBtn = document.getElementById("uploadBtn");
+    if (uploadBtn) {
+      setTimeout(() => {
+        console.log("📦 File selected. Scrolling to uploadBtn...");
+        uploadBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        uploadBtn.classList.remove("pulse-once");
+        void uploadBtn.offsetWidth;
+        uploadBtn.classList.add("pulse-once");
+      }, 300);
+    }
+  });
+});
+
 
 	</script>
 
