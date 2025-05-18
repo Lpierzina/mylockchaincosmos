@@ -214,20 +214,23 @@ app.post("/sendReceipt", async (req, res) => {
 
     const readableTime = new Date(timestamp * 1000).toLocaleString();
 
-    const htmlBody = `
-      <h2>📄 LockChain Registration Receipt</h2>
-      <ul>
-        <li><strong>File Name:</strong> ${fileName}</li>
-        <li><strong>IPFS CID:</strong> ${ipfsHash}</li>
-        <li><strong>Document Hash (Hex):</strong> ${hashHex}</li>
-        <li><strong>Base64 Format:</strong> ${Buffer.from(hashHex.replace(/^0x/, ''), 'hex').toString('base64')}</li>
-        <li><em>Note:</em> Base64 is required by CosmWasm for storing binary hashes.</li>
-        <li><strong>Registered By:</strong> ${registrant}</li>
-        <li><strong>Timestamp:</strong> ${readableTime}</li>
-        <li><strong>Contract:</strong> <a href="${contractExplorerUrl}" target="_blank">${contractAddress}</a></li>
-        <li><strong>Transaction:</strong> <a href="${transactionExplorerUrl}" target="_blank">${txHash}</a></li>
-      </ul>
-    `;
+    const ipfsLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+const base64 = Buffer.from(hashHex.replace(/^0x/, ""), "hex").toString("base64");
+
+const htmlBody = `
+  <h2>📄 Your LockChain Registration Receipt</h2>
+  <p><strong>File Name:</strong> ${fileName}</p>
+  <p><strong>IPFS CID:</strong> ${ipfsHash}</p>
+  <p><strong>Retrieve Link:</strong> <a href="${ipfsLink}">${ipfsLink}</a></p>
+  <p><strong>Document Hash (Hex):</strong> ${hashHex}</p>
+  <p><strong>Base64 Format:</strong> ${base64}</p>
+  <p><em>Note: CosmWasm contracts require base64 input for binary hashes</em></p>
+  <p><strong>Registered By:</strong> ${registrant}</p>
+  <p><strong>Timestamp:</strong> ${readableTime}</p>
+  <p><strong>Contract:</strong> <a href="${contractExplorerUrl}" target="_blank">View on Neutron Explorer</a></p>
+  <p><strong>Transaction:</strong> <a href="${transactionExplorerUrl}" target="_blank">${txHash}</a></p>
+`;
+
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
