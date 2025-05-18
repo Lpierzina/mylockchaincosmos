@@ -1373,34 +1373,46 @@ async function uploadParcelJSON() {
 		}
 	}
     // Step 2: Called when user clicks "Upload and Hash Document"
-    async function handleFileAndPayment() {
-        const fileInput = document.getElementById('fileInput');
-        const selectedFile = fileInput.files[0];
-        if (!selectedFile) {
-            alert('Please select a PDF file first.');
-            return;
-        }
-        // Check the size + fee
-        const fee = determineFeeBySize(selectedFile.size);
-        if (fee < 0) {
-            // invalid file
-            return;
-        }
-        fileToUpload = selectedFile;    // store globally
-        uploadCostUSD = fee;           // store the cost
-
-        // Show the file name
-        lastUploadedFileName = selectedFile.name;
-        document.getElementById('fileNameOutput').innerText = `File Name: ${selectedFile.name}`;
-
-        if (fee === 0) {
-            // No PayPal payment needed => directly upload to IPFS
-            await uploadToIPFS();
-        } else {
-            // Show PayPal button for the fee
-            showPayPalButton(fee);
-        }
+async function handleFileAndPayment() {
+    const fileInput = document.getElementById('fileInput');
+    const selectedFile = fileInput.files[0];
+    if (!selectedFile) {
+        alert('Please select a PDF file first.');
+        return;
     }
+
+    // Check the size + fee
+    const fee = determineFeeBySize(selectedFile.size);
+    if (fee < 0) return; // invalid file
+
+    fileToUpload = selectedFile;    // store globally
+    uploadCostUSD = fee;           // store the cost
+
+    // Show the file name
+    lastUploadedFileName = selectedFile.name;
+    document.getElementById('fileNameOutput').innerText = `File Name: ${selectedFile.name}`;
+
+    // 👇 Scroll to the "Upload and Hash Document" button
+    setTimeout(() => {
+        const uploadBtn = document.getElementById("uploadBtn");
+        if (uploadBtn) {
+            console.log("🔍 Scrolling to uploadBtn...");
+            uploadBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Restart pulse animation
+            uploadBtn.classList.remove("pulse-once");
+            void uploadBtn.offsetWidth; // trigger reflow
+            uploadBtn.classList.add("pulse-once");
+        }
+    }, 300);
+
+    // Decide payment or free upload
+    if (fee === 0) {
+        await uploadToIPFS(); // no payment needed
+    } else {
+        showPayPalButton(fee); // show PayPal
+    }
+}
 
  // 💳 Updated PayPal UI call (ensures uploadToIPFS gets triggered only after payment)
 function showPayPalButton(amountUSD) {
@@ -1489,23 +1501,6 @@ async function uploadToIPFS() {
         fileName: fileToUpload?.name || "(unknown)"
       });
 
-      console.log("🔍 Scrolling to uploadBtn...");
-console.log("uploadBtn exists:", !!uploadBtn);
-console.log("uploadBtn visible:", uploadBtn?.offsetParent !== null);
-
-
-      // ✅ Scroll to Step 2 Upload Button AFTER DOM updates
-setTimeout(() => {
-  const uploadBtn = document.getElementById("uploadBtn");
-  if (uploadBtn) {
-    uploadBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    // Force animation restart
-    uploadBtn.classList.remove("pulse-once");
-    void uploadBtn.offsetWidth;  // 👈 this forces reflow to re-trigger animation
-    uploadBtn.classList.add("pulse-once");
-  }
-}, 500); // Delay must allow the DOM to settle
 
     }
 
