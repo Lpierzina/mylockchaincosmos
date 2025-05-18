@@ -1502,11 +1502,17 @@ async function uploadToIPFS() {
         document.getElementById('retrieveHash').value = ipfsHash;
 
         // 👇 Automatically register the hash on-chain using ERC-4337 sponsored tx
-        if (window.handlePostUploadSubmission) {
-            await window.handlePostUploadSubmission({ hashHex, ipfsHash, fileName: fileToUpload?.name || "(unknown)" });
-        } else {
-            console.warn('Submission module not found. Skipping UserOp.');
-        }
+       if (window.handlePostUploadSubmission) {
+  await window.handlePostUploadSubmission({ hashHex, ipfsHash, fileName: fileToUpload?.name || "(unknown)" });
+
+  // 👇 Auto-scroll to Step 3 Register Button
+  const step3Box = document.querySelector('div.shade-box h3:nth-of-type(2)');
+  if (step3Box) {
+    step3Box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+} else {
+  console.warn('Submission module not found. Skipping UserOp.');
+}
 
     } catch (error) {
         console.error('Error uploading file:', error);

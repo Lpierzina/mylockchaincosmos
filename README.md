@@ -91,6 +91,46 @@ $NTRN powers smart contracts on Neutron.
 All MyLockChain activity contributes to growing the Cosmos Interchain.
 
 ## 🌠 Becoming a Top-Tier DApp in Cosmos
+
+💫 Version Progression
+
+V1 – Ethereum + MetaMask
+
+Manual wallet flow on Ethereum Mainnet
+
+Smart contract in Solidity (LockChainRegistry.sol)
+
+UI connected to MetaMask/Coinbase Wallet
+
+https://mytitlelock.netlify.app
+
+V2 – Arbitrum + Pimlico + ERC-4337
+
+Fully gasless UX with LightAccount v2 + EntryPoint v0.7
+
+Uses factory/factoryData to deploy ephemeral wallets
+
+Sponsored via Pimlico's pm_getPaymasterData API
+
+Uses viem, permissionless.js, and PayPal integration
+
+Nodemailer for auto-sent receipts
+
+https://mylockchain.io
+
+V3 – Cosmos + Neutron + CosmWasm (Rust)
+
+Walletless, fiat-onboarding flow using PayPal
+
+SHA-256 hashes converted to base64 for CosmWasm
+
+Gas sponsored via backend signer (CosmJS + Express)
+
+Smart contract written entirely in Rust
+
+Deployed to Netlify (frontend) and Heroku (backend)
+
+https://mylockchaincosmos.io
 ## ✈️ Flow Diagram (Mermaid Sequence)
 
 ```mermaid
