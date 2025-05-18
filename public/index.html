@@ -1499,9 +1499,8 @@ async function uploadToIPFS() {
   }
 }
 
-
-    // 4) Register Hash on Blockchain
-   async function registerHashOnCosmos() {
+// 4) Register Hash on Blockchain
+async function registerHashOnCosmos() {
   if (!hashHex || !ipfsHash) {
     alert('Hash or IPFS data missing.');
     return;
@@ -1523,22 +1522,34 @@ async function uploadToIPFS() {
     const result = await res.json();
 
     if (result.success && result.txHash) {
+      const ipfsLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+      const base64 = btoa(
+        hashHex.startsWith('0x')
+          ? hashHex.slice(2).match(/.{1,2}/g).map(b => String.fromCharCode(parseInt(b, 16))).join('')
+          : ''
+      );
+
       const receiptHTML = `
-        <strong>File Name:</strong> ${lastUploadedFileName}<br>
-        <strong>IPFS Hash:</strong> ${ipfsHash}<br>
-        <strong>Blockchain Transaction:</strong>
+        <strong>📄 File Name:</strong> ${lastUploadedFileName}<br>
+        <strong>🧬 IPFS CID:</strong> ${ipfsHash}<br>
+        <strong>🔗 Retrieve File:</strong> <a href="${ipfsLink}" target="_blank">${ipfsLink}</a><br>
+        <strong>🧾 Document Hash (Hex):</strong> ${hashHex}<br>
+        <strong>🧬 Base64 Format:</strong> ${base64}<br>
+        <em>Note: CosmWasm contracts require base64 input for binary hashes</em><br><br>
+        <strong>🪪 Registered By:</strong> ${result.registrant || 'n/a'}<br>
+        <strong>🕓 Timestamp:</strong> ${new Date(result.timestamp * 1000).toLocaleString()}<br>
+        <strong>📜 Transaction:</strong>
         <a href="https://www.mintscan.io/neutron/txs/${result.txHash}" target="_blank">${result.txHash}</a>
       `;
 
       document.getElementById('receiptContent').innerHTML = receiptHTML;
       document.getElementById('receipt').style.display = 'block';
 
-      const ipfsLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
       new QRCode(document.getElementById('qrCode'), ipfsLink);
 
-    setTimeout(() => {
-      document.getElementById('receipt').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300); // Delay allows DOM to reflow
+      setTimeout(() => {
+        document.getElementById('receipt').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
     } else {
       alert('❌ Cosmos registration failed: ' + result.error);
     }
