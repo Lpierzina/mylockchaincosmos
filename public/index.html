@@ -1443,77 +1443,75 @@ function showPayPalButton(amountUSD) {
 
  // Updated uploadToIPFS function with auto ERC-4337 submission after PayPal
 async function uploadToIPFS() {
-    if (!fileToUpload) {
-        alert('No file is selected. Please select a file first.');
-        return;
+  if (!fileToUpload) {
+    alert('No file is selected. Please select a file first.');
+    return;
+  }
+
+  toggleLoadingOverlay(true);
+
+  try {
+    // STEP 1: Compute SHA-256 Hash
+    const arrayBuffer = await fileToUpload.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    hashHex = '0x' + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    // STEP 2: Upload to IPFS
+    const formData = new FormData();
+    formData.append('file', fileToUpload);
+
+    const response = await fetch(
+      'https://polar-stream-23993-43b80ccd3a73.herokuapp.com/upload',
+      { method: 'POST', body: formData }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to upload file to server.');
     }
-    toggleLoadingOverlay(true);
-    try {
-        // STEP 1: Compute SHA-256 Hash
-        const arrayBuffer = await fileToUpload.arrayBuffer();
-        const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        hashHex = '0x' + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-        // STEP 2: Upload to IPFS
-        const formData = new FormData();
-        formData.append('file', fileToUpload);
+    const data = await response.json();
+    ipfsHash = data.IpfsHash;
 
-        const response = await fetch(
-            'https://polar-stream-23993-43b80ccd3a73.herokuapp.com/upload',  //
-            {
-                method: 'POST',
-                body: formData
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error('Failed to upload file to server.');
-        }
-
-        const data = await response.json();
-        ipfsHash = data.IpfsHash;
-
-        const hashOutputEl = document.getElementById('hashOutput');
-        if (hashOutputEl) {
-            hashOutputEl.innerText = `IPFS Hash: ${ipfsHash}`;
-        }
-
-        alert(`✅ Upload complete! Your document was pinned on IPFS.\n\nIPFS Hash: ${ipfsHash}`);
-
-        document.getElementById('retrieveHash').value = ipfsHash;
-
-        // 👇 Automatically register the hash on-chain using ERC-4337 sponsored tx
-     if (window.handlePostUploadSubmission) {
-  await window.handlePostUploadSubmission({
-    hashHex,
-    ipfsHash,
-    fileName: fileToUpload?.name || "(unknown)"
-  });
-
-  // ✅ Delay to ensure DOM is ready
-  setTimeout(() => {
-    const uploadButton = document.getElementById("uploadBtn");
-    if (uploadButton) {
-      uploadButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-      // 🔁 Restart animation by removing + re-adding class
-      uploadButton.classList.remove("pulse-once");
-      void uploadButton.offsetWidth;
-      uploadButton.classList.add("pulse-once");
+    const hashOutputEl = document.getElementById('hashOutput');
+    if (hashOutputEl) {
+      hashOutputEl.innerText = `IPFS Hash: ${ipfsHash}`;
     }
-  }, 500); // small delay helps ensure scroll/pulse work
+
+    alert(`✅ Upload complete! Your document was pinned on IPFS.\n\nIPFS Hash: ${ipfsHash}`);
+    document.getElementById('retrieveHash').value = ipfsHash;
+
+    // 👇 Automatically register the hash on-chain using sponsored backend flow
+    if (window.handlePostUploadSubmission) {
+      await window.handlePostUploadSubmission({
+        hashHex,
+        ipfsHash,
+        fileName: fileToUpload?.name || "(unknown)"
+      });
+
+      // ✅ Scroll to Upload Button + animate
+      setTimeout(() => {
+        const uploadBtn = document.getElementById("uploadBtn");
+        if (uploadBtn) {
+          uploadBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          uploadBtn.classList.remove("pulse-once");
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              uploadBtn.classList.add("pulse-once");
+            });
+          });
+        }
+      }, 300);
+    }
+
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    alert('❌ Failed to upload file. Please try again.');
+  } finally {
+    toggleLoadingOverlay(false);
+  }
 }
 
-
-
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        alert('❌ Failed to upload file. Please try again.');
-    } finally {
-        toggleLoadingOverlay(false);
-    }
-}
 
     // 4) Register Hash on Blockchain
    async function registerHashOnCosmos() {
@@ -1550,7 +1548,10 @@ async function uploadToIPFS() {
 
       const ipfsLink = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
       new QRCode(document.getElementById('qrCode'), ipfsLink);
-      document.getElementById('receipt').scrollIntoView({ behavior: 'smooth' });
+
+    setTimeout(() => {
+      document.getElementById('receipt').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300); // Delay allows DOM to reflow
     } else {
       alert('❌ Cosmos registration failed: ' + result.error);
     }
