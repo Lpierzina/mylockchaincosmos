@@ -314,7 +314,9 @@
 
 .pulse-once {
   animation: pulse 1.5s ease-out 1;
+  outline: 2px solid orange;
 }
+
 
     /* Spinner Overlay */
     #loadingOverlay {
@@ -1482,23 +1484,28 @@ async function uploadToIPFS() {
         document.getElementById('retrieveHash').value = ipfsHash;
 
         // 👇 Automatically register the hash on-chain using ERC-4337 sponsored tx
-       if (window.handlePostUploadSubmission) {
-  await window.handlePostUploadSubmission({ hashHex, ipfsHash, fileName: fileToUpload?.name || "(unknown)" });
+     if (window.handlePostUploadSubmission) {
+  await window.handlePostUploadSubmission({
+    hashHex,
+    ipfsHash,
+    fileName: fileToUpload?.name || "(unknown)"
+  });
 
- // 👇 Scroll to the Upload & Hash button and pulse it
-const uploadButton = document.getElementById("uploadBtn");
-if (uploadButton) {
-  uploadButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // ✅ Delay to ensure DOM is ready
+  setTimeout(() => {
+    const uploadButton = document.getElementById("uploadBtn");
+    if (uploadButton) {
+      uploadButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  // Trigger pulse animation
-  uploadButton.classList.remove("pulse-once"); // restart if applied before
-  void uploadButton.offsetWidth;               // force reflow
-  uploadButton.classList.add("pulse-once");
+      // 🔁 Restart animation by removing + re-adding class
+      uploadButton.classList.remove("pulse-once");
+      void uploadButton.offsetWidth;
+      uploadButton.classList.add("pulse-once");
+    }
+  }, 500); // small delay helps ensure scroll/pulse work
 }
 
-} else {
-  console.warn('Submission module not found. Skipping UserOp.');
-}
+
 
     } catch (error) {
         console.error('Error uploading file:', error);
