@@ -44,19 +44,6 @@ app.options("*", cors({
 // ✅ Define app first
 // globally enable CORS on all methods
 /*
-app.use(cors({
-  origin: 'https://mylockchaincosmos.netlify.app',
-  methods: ['GET','POST','OPTIONS'],
-  allowedHeaders: ['Content-Type']
-}));
-
-// explicitly handle preflight
-app.options('*', cors({
-  origin: 'https://mylockchaincosmos.netlify.app',
-  methods: ['GET','POST','OPTIONS'],
-  allowedHeaders: ['Content-Type']
-}));
-// ✅ Fix crash: use only relative path for CORS origin (not absolute URL)
 app.use(cors()); // Allow all for now to isolate the issue
 app.options('*', cors());*/
 app.use(express.json());
