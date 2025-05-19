@@ -56,23 +56,46 @@ window.handlePostUploadSubmission = async function ({ hashHex, ipfsHash, fileNam
     const contentEl = document.getElementById("receiptContent");
     const qrCodeEl = document.getElementById("qrCode");
 
+    const base64 = hexToBase64(hashHex);
+    const contractExplorerUrl = `https://www.mintscan.io/neutron/address/${contractAddress}`;
+    const transactionExplorerUrl = `https://www.mintscan.io/neutron/tx/${transactionHash}`;
+
     contentEl.innerHTML = `
-      <h2>📄 Your LockChain Registration Receipt</h2>
-      <ul>
-        <li><strong>File Name:</strong> ${fileName}</li>
-        <li><strong>IPFS CID:</strong> ${ipfsHash}</li>
-        <li><strong>Document Hash (Hex):</strong> ${hashHex}</li>
-        <li><strong>Base64 Format:</strong> ${hexToBase64(hashHex)}</li>
-        <li><em>Note:</em> CosmWasm contracts require base64 input for binary hashes</em></li>
-        <li><strong>Registered By:</strong> ${registrant}</li>
-        <li><strong>Timestamp:</strong> ${readableTime}</li>
-        <li><strong>Contract:</strong> <a href="${contractLink}" target="_blank">View on Neutron Explorer</a></li>
-        <li><strong>Transaction:</strong> <a href="${txLink}" target="_blank">${transactionHash}</a></li>
-      </ul>
-      <label for="email">📧 Want a copy of this receipt by email?</label>
-      <input type="email" id="emailInput" placeholder="you@example.com" />
-      <button onclick="sendReceiptByEmail()">Send Receipt</button>
-    `;
+      <h2>📄 Your LockChainCosmos Registration Receipt</h2>
+
+  <p><strong>🚀 File Name:</strong> ${fileName}<br/>
+  <em>The title of your cosmic satellite — the original filename that launched this journey.</em></p>
+
+  <p><strong>🛰️ IPFS CID:</strong> ${ipfsHash}<br/>
+  <em>This is your satellite’s interplanetary fingerprint — the IPFS Content Identifier that ensures it never drifts from orbit.</em></p>
+
+  <p><strong>🔗 Retrieve Link:</strong> <a href="${ipfsLink}" target="_blank">${ipfsLink}</a><br/>
+  <em>Beam it back from the InterPlanetary File System any time. Your document is now decentralized and always retrievable.</em></p>
+
+  <p><strong>🧬 Document Hash (Hex):</strong> ${hashHex}<br/>
+  <em>This hex string is your file’s cryptographic DNA — a tamper-proof proof-of-existence forged at the edge of the Interchain.</em></p>
+
+  <p><strong>📦 Base64 Format:</strong> ${base64}<br/>
+  <em>This is how your file’s essence travels through the Cosmos. CosmWasm contracts speak Base64 — it’s the lingua franca of smart contracts on Neutron.</em></p>
+
+  <p><em>💡 Note:</em> CosmWasm requires base64-encoded input for binary data. That’s how we store your digital footprint in orbit.</p>
+
+  <p><strong>👤 Registered By:</strong> ${registrant}<br/>
+  <em>This is the identity that signed your cosmic ledger — the wallet that etched your hash into the stars.</em></p>
+
+  <p><strong>🕰️ Timestamp:</strong> ${readableTime}<br/>
+  <em>Temporal coordinates of your launch — the precise Earth time your document entered the blockchain constellations.</em></p>
+
+  <p><strong>📡 Contract:</strong> <a href="${contractExplorerUrl}" target="_blank">View on Neutron Explorer</a><br/>
+  <em>This smart contract is your ground station — it holds the registration beacon forever on the Neutron chain.</em></p>
+
+  <p><strong>💫 Transaction:</strong> <a href="${transactionExplorerUrl}" target="_blank">${transactionHash}</a><br/>
+  <em>The rocket that carried your hash into orbit. This transaction is your immutable trail across the Cosmos.</em></p>
+
+  <label for="email">📧 Want a copy of this receipt by email?</label>
+  <input type="email" id="emailInput" placeholder="you@example.com" />
+  <button onclick="sendReceiptByEmail()">Send Receipt</button>
+`;
 
     // QR code safely
     try {
