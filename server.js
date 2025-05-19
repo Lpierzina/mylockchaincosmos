@@ -9,7 +9,39 @@ const nodemailer = require("nodemailer");
 
 
 
-const app = express(); // ✅ Define app first
+const app = express();
+const allowedOrigins = [
+  "https://mylockchaincosmos.netlify.app",
+  "https://mylockchain.io"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("❌ Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
+}));
+
+// Explicitly handle preflight OPTIONS
+app.options("*", cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("❌ Not allowed by CORS (preflight)"));
+    }
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
+}));
+
+
+// ✅ Define app first
 // globally enable CORS on all methods
 /*
 app.use(cors({
@@ -23,10 +55,10 @@ app.options('*', cors({
   origin: 'https://mylockchaincosmos.netlify.app',
   methods: ['GET','POST','OPTIONS'],
   allowedHeaders: ['Content-Type']
-}));  */
+}));
 // ✅ Fix crash: use only relative path for CORS origin (not absolute URL)
 app.use(cors()); // Allow all for now to isolate the issue
-app.options('*', cors());
+app.options('*', cors());*/
 app.use(express.json());
 
 
