@@ -382,6 +382,22 @@
     display: inline-block;
   }
     }
+
+
+    /* 🔧 Dim the PayPal fallback overlay if popup fails */
+#paypal-lightbox {
+  background-color: rgba(0, 0, 0, 0.7) !important;  /* darker dimming */
+  z-index: 9999 !important;
+  color: white !important;
+  font-size: 16px !important;
+  font-family: 'Orbitron', sans-serif !important;
+}
+
+#paypal-lightbox a {
+  color: #ff9800 !important;
+  text-decoration: underline !important;
+}
+
   </style>
 </head>
 
