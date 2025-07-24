@@ -274,7 +274,9 @@ const htmlBody = `
 
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+       host: 'smtp.purelymail.com',
+  port: 587,
+  secure: false, // true for 465, false for 587 (STARTTLS)
       auth: {
         user: process.env.EMAIL_USER, // e.g. 'luke@mylockchain.io'
         pass: process.env.EMAIL_PASS, // Gmail App Password
